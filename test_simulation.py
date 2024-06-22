@@ -26,8 +26,8 @@ class State:
     def __init__(self) -> None:
         self.state = {}
         self.aims = {
-            'new_aims': {0: [90, 1], 1: [10, 50]},
-            'old_aims': {0: [90, 1], 1: [10, 50]}
+            'new_aims': {0: [80, 1], 1: [10, 50]},
+            'old_aims': {0: [80, 1], 1: [10, 50]}
         }
 
     # add object to state (for work with him)
@@ -134,7 +134,7 @@ class State:
         # cheack to achieve the aim
         if (isclose(new_x, aim[0], rel_tol=0.1)) and (isclose(new_y, aim[1], rel_tol=0.1)) and not self.state[name]['props']['is_zombie'] and not self.state[name]['props']['is_find_aim']:
             self.aims['new_aims'][self.state[name]['props']['aim_count']] = [
-                random.randint(0, 99), random.randint(0, 99)]
+                random.randint(10, 90), random.randint(10, 90)]
             if 1 == 1:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
@@ -270,7 +270,7 @@ class State:
             for ob in self.state:
                 # for that if object dont pic himself
                 if name != ob:
-                    if min_points > [self.state[ob]['points'][0], self.state[ob]['points'][1]]:
+                    if min_points >= [self.state[ob]['points'][0], self.state[ob]['points'][1]]:
                         min_points = [self.state[ob]['points']
                                       [0], self.state[ob]['points'][1]]
 
