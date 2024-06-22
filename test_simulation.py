@@ -195,32 +195,32 @@ class State:
         is_run_away = False
 
         def is_zombie_near():
-            maximum_distance = [0, 0]
-            for ob in self.state:
-                if self.state[ob]['props']['is_zombie']:
-                    x = self.state[name]['points'][0]
-                    y = self.state[name]['points'][1]
-                    x_zomb = self.state[ob]['points'][0]
-                    y_zomb = self.state[ob]['points'][1]
-                    if y <= y_zomb and x >= x_zomb:
-                        if [x + x_zomb, y - y_zomb] < maximum_distance:
-                            self.state[name]['props']['is_run_away'] = True
-                            return ob
+            # maximum_distance = [0, 0]
+            # for ob in self.state:
+            #     if self.state[ob]['props']['is_zombie']:
+            #         x = self.state[name]['points'][0]
+            #         y = self.state[name]['points'][1]
+            #         x_zomb = self.state[ob]['points'][0]
+            #         y_zomb = self.state[ob]['points'][1]
+            #         if y <= y_zomb and x >= x_zomb:
+            #             if [x + x_zomb, y - y_zomb] < maximum_distance:
+            #                 self.state[name]['props']['is_run_away'] = True
+            #                 return ob
 
-                    if y <= y_zomb and x <= x_zomb:
-                        if [x + x_zomb, y + y_zomb] < maximum_distance:
-                            self.state[name]['props']['is_run_away'] = True
-                            return ob
+            #         if y <= y_zomb and x <= x_zomb:
+            #             if [x + x_zomb, y + y_zomb] < maximum_distance:
+            #                 self.state[name]['props']['is_run_away'] = True
+            #                 return ob
 
-                    if y >= y_zomb and x <= x_zomb:
-                        if [x - x_zomb, y + y_zomb] < maximum_distance:
-                            self.state[name]['props']['is_run_away'] = True
-                            return ob
+            #         if y >= y_zomb and x <= x_zomb:
+            #             if [x - x_zomb, y + y_zomb] < maximum_distance:
+            #                 self.state[name]['props']['is_run_away'] = True
+            #                 return ob
 
-                    if y >= y_zomb and x >= x_zomb:
-                        if [x - x_zomb, y - y_zomb] < maximum_distance:
-                            self.state[name]['props']['is_run_away'] = True
-                            return ob
+            #         if y >= y_zomb and x >= x_zomb:
+            #             if [x - x_zomb, y - y_zomb] < maximum_distance:
+            #                 self.state[name]['props']['is_run_away'] = True
+            #                 return ob
 
             self.state[name]['props']['is_run_away'] = False
 
@@ -347,10 +347,15 @@ class Game:
 
     def main(self):
         while True:
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_d:
+                        print("D key pressed!")
+
             self.window.clear()
             for ob in self.state.show_state():
                 self.state.update_object_position(ob)
