@@ -70,8 +70,14 @@ class State:
             self.state[name]['props']['is_find_aim'] = True
 
         elif is_zomb:
-            self.state[name]['props']['aim'][0] = coord[0]
-            self.state[name]['props']['aim'][1] = coord[1]
+            if coord[0] > 0:
+                self.state[name]['props']['aim'][0] = coord[0]
+            else:
+                self.state[name]['props']['aim'][0] = 1000000
+            if coord[1] > 0:
+                self.state[name]['props']['aim'][1] = coord[1]
+            else:
+                self.state[name]['props']['aim'][1] = 1000000
 
     # main
 
