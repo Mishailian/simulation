@@ -145,7 +145,7 @@ class State:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
-                    State.do_onse = False
+                    # State.do_onse = False
 
         self._show_object(self.state[name]['points'],
                           self.state[name]['props']['color'])
@@ -275,7 +275,7 @@ class State:
                           [0], self.state[name]['props']['aim'][1]]
             for ob in self.state:
                 # for that if object dont pic himself
-                if name != ob:
+                if name != ob and self.state[ob]['props']['is_zombie']:
                     if min_points >= [self.state[ob]['points'][0], self.state[ob]['points'][1]]:
                         min_points = [self.state[ob]['points']
                                       [0], self.state[ob]['points'][1]]
