@@ -105,19 +105,15 @@ class State:
         if new_x < 0:
             new_x = 59
             aim[0] = 50
-            self.state[name]['props']['aim'][0] = 50
         if new_y < 0:
             new_y = 50
             aim[1] = 59
-            self.state[name]['props']['aim'][1] = 59
         if new_x > 100:
             new_x = 59.0
             aim[0] = 50
-            self.state[name]['props']['aim'][0] = 50
         if new_y > 100:
             new_y = 50.0
             aim[1] = 59
-            self.state[name]['props']['aim'][1] = 59
 
         # basic movement logic
         if new_x < aim[0]:
@@ -243,13 +239,13 @@ class State:
                 y_zomb = self.state[zomb]['points'][1]
 
                 if abs(x - x_zomb) <= 5:
-                    x += 5
-                else:
                     x -= 5
-                if abs(y - y_zomb) <= 5:
-                    y += 5
                 else:
+                    x += 5
+                if abs(y - y_zomb) <= 5:
                     y -= 5
+                else:
+                    y += 5
 
                 coord = [x, y]
                 self.init_aim_in_object(name=name, coord=coord)
