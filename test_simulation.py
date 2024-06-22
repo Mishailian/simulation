@@ -103,17 +103,13 @@ class State:
 
         # border
         if new_x < 0:
-            new_x = 59
-            aim[0] = 50
+            new_x = 99
         if new_y < 0:
-            new_y = 50
-            aim[1] = 59
+            new_y = 99
         if new_x > 100:
-            new_x = 59.0
-            aim[0] = 50
+            new_x = 1
         if new_y > 100:
-            new_y = 50.0
-            aim[1] = 59
+            new_y = 1
 
         # basic movement logic
         if new_x < aim[0]:
