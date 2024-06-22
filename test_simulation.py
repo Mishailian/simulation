@@ -101,6 +101,24 @@ class State:
         old_x = new_x
         old_y = new_y
 
+        # border
+        if new_x < 0:
+            new_x = 59
+            aim[0] = 50
+            self.state[name]['props']['aim'][0] = 50
+        if new_y < 0:
+            new_y = 50
+            aim[1] = 59
+            self.state[name]['props']['aim'][1] = 59
+        if new_x > 100:
+            new_x = 59.0
+            aim[0] = 50
+            self.state[name]['props']['aim'][0] = 50
+        if new_y > 100:
+            new_y = 50.0
+            aim[1] = 59
+            self.state[name]['props']['aim'][1] = 59
+
         # basic movement logic
         if new_x < aim[0]:
             new_x += speed_x
@@ -110,15 +128,6 @@ class State:
             new_y += speed_y
         if new_y > aim[1] and (False == (isclose(new_y, aim[1], rel_tol=0.001))):
             new_y -= speed_y
-        # border
-        if new_x < 0:
-            new_x = 0
-        if new_y < 0:
-            new_y = 0
-        if new_x > 100:
-            new_x = 99.0
-        if new_y > 100:
-            new_y = 99.0
 
         # if cell stuck
         if old_x == new_x:
@@ -195,32 +204,32 @@ class State:
         is_run_away = False
 
         def is_zombie_near():
-            # maximum_distance = [0, 0]
-            # for ob in self.state:
-            #     if self.state[ob]['props']['is_zombie']:
-            #         x = self.state[name]['points'][0]
-            #         y = self.state[name]['points'][1]
-            #         x_zomb = self.state[ob]['points'][0]
-            #         y_zomb = self.state[ob]['points'][1]
-            #         if y <= y_zomb and x >= x_zomb:
-            #             if [x + x_zomb, y - y_zomb] < maximum_distance:
-            #                 self.state[name]['props']['is_run_away'] = True
-            #                 return ob
+            maximum_distance = [10, 10]
+            for ob in self.state:
+                if self.state[ob]['props']['is_zombie']:
+                    x = self.state[name]['points'][0]
+                    y = self.state[name]['points'][1]
+                    x_zomb = self.state[ob]['points'][0]
+                    y_zomb = self.state[ob]['points'][1]
+                    if y <= y_zomb and x >= x_zomb:
+                        if [x + x_zomb, y - y_zomb] <= maximum_distance:
+                            self.state[name]['props']['is_run_away'] = True
+                            return ob
 
-            #         if y <= y_zomb and x <= x_zomb:
-            #             if [x + x_zomb, y + y_zomb] < maximum_distance:
-            #                 self.state[name]['props']['is_run_away'] = True
-            #                 return ob
+                    if y <= y_zomb and x <= x_zomb:
+                        if [x + x_zomb, y + y_zomb] < maximum_distance:
+                            self.state[name]['props']['is_run_away'] = True
+                            return ob
 
-            #         if y >= y_zomb and x <= x_zomb:
-            #             if [x - x_zomb, y + y_zomb] < maximum_distance:
-            #                 self.state[name]['props']['is_run_away'] = True
-            #                 return ob
+                    if y >= y_zomb and x <= x_zomb:
+                        if [x - x_zomb, y + y_zomb] < maximum_distance:
+                            self.state[name]['props']['is_run_away'] = True
+                            return ob
 
-            #         if y >= y_zomb and x >= x_zomb:
-            #             if [x - x_zomb, y - y_zomb] < maximum_distance:
-            #                 self.state[name]['props']['is_run_away'] = True
-            #                 return ob
+                    if y >= y_zomb and x >= x_zomb:
+                        if [x - x_zomb, y - y_zomb] < maximum_distance:
+                            self.state[name]['props']['is_run_away'] = True
+                            return ob
 
             self.state[name]['props']['is_run_away'] = False
 
@@ -233,14 +242,14 @@ class State:
                 x_zomb = self.state[zomb]['points'][0]
                 y_zomb = self.state[zomb]['points'][1]
 
-                if isclose(x - 9, x_zomb, rel_tol=3):
-                    x += 9
+                if abs(x - x_zomb) <= 5:
+                    x += 5
                 else:
-                    x -= 9
-                if isclose(y - 9, y_zomb, rel_tol=3):
-                    y += 9
+                    x -= 5
+                if abs(y - y_zomb) <= 5:
+                    y += 5
                 else:
-                    y -= 9
+                    y -= 5
 
                 coord = [x, y]
                 self.init_aim_in_object(name=name, coord=coord)
@@ -264,7 +273,8 @@ class State:
         elif self.state[name]['props']['is_zombie']:
             x = self.state[name]['points'][0]
             y = self.state[name]['points'][1]
-            min_points = [50, 50]
+            min_points = [self.state[name]['props']['aim']
+                          [0], self.state[name]['props']['aim'][1]]
             for ob in self.state:
                 # for that if object dont pic himself
                 if name != ob:
