@@ -53,6 +53,9 @@ class State:
     def create_new_object(self):
         new_object = Cell(0, 0)
         new_object.init_cell(self)
+    
+    def compare_lists_by_sum(self, list1, list2):
+        return sum(list1) <= sum(list2)
 
     def init_aim_in_object(self, name, is_zomb=False, coord=None):
         is_find_aim = self.state[name]['props']['is_find_aim']
@@ -145,7 +148,7 @@ class State:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
-                    self.state[name]['props']['speed'] = [0.2, 0.2]
+                    self.state[name]['props']['speed'] = [0.1, 0.1]
                     State.do_onse = False
 
         self._show_object(self.state[name]['points'],
@@ -201,17 +204,18 @@ class State:
     def find_nearest_aim(self, name):
         zomb = None
         is_run_away = False
-
+        
         def is_zombie_near():
-            maximum_distance = [10, 10]
+            maximum_distance = [10, 5]
             for ob in self.state:
                 if self.state[ob]['props']['is_zombie']:
                     x = self.state[name]['points'][0]
                     y = self.state[name]['points'][1]
                     x_zomb = self.state[ob]['points'][0]
                     y_zomb = self.state[ob]['points'][1]
+                    res = [abs(x - x_zomb), abs(y - y_zomb)]
 
-                    if [abs(x - x_zomb), abs(y - y_zomb)] <= maximum_distance:
+                    if self.compare_lists_by_sum(res, maximum_distance):
                         self.state[name]['props']['is_run_away'] = True
                         return ob
 
@@ -228,11 +232,11 @@ class State:
                 y_zomb = self.state[zomb]['points'][1]
 
                 if abs(x - x_zomb) <= 5:
-                    x -= 5
-                else:
                     x += 5
+                else:
+                    x -= 5
                 if abs(y - y_zomb) <= 5:
-                    y += 5
+                    y -= 5
                 else:
                     y += 5
 
@@ -363,6 +367,6 @@ class Game:
 
 
 game = Game()
-for i in range(0, 100):
+for i in range(0, 2):
     game.state.create_new_object()
 game.main()
