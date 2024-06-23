@@ -147,7 +147,7 @@ class State:
         # if old_y == new_y:
         #     new_y += .01
         # collision check
-        # self.collision(name)
+        self.collision(name)
         # setup new points to state
         self.state[name]['points'] = (new_x, new_y)
 
@@ -159,8 +159,8 @@ class State:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
-                    self.state[name]['props']['speed'] = [0.2, 0.2]
-                    # State.do_onse = False
+                    self.state[name]['props']['speed'] = [1, 1]
+                    State.do_onse = False
 
         self._show_object(self.state[name]['points'],
                           self.state[name]['props']['color'])
@@ -217,7 +217,7 @@ class State:
         is_run_away = False
         
         def is_zombie_near():
-            maximum_distance = [10, 5]
+            maximum_distance = [2, 2]
             for ob in self.state:
                 if self.state[ob]['props']['is_zombie']:
                     x = self.state[name]['points'][0]
@@ -279,11 +279,13 @@ class State:
             for ob in self.state:
                 # for that if object dont pic himself
                 if name != ob and not self.state[ob]['props']['is_zombie']:
-                    if self.compare_lists_by_sum([abs(min_points[0] - self.state[ob]['points'][0]),abs(min_points[1] - self.state[ob]['points'][1])], [10,10]):
+                    if self.compare_lists_by_sum([abs(min_points[0] - self.state[ob]['points'][0]),abs(min_points[1] - self.state[ob]['points'][1])], [40,40]):
                         min_points[0] = self.state[ob]['points'][0]
                         min_points[1] = self.state[ob]['points'][1]
-
-
+                    elif isclose(x, self.state[ob]['points'][0], abs_tol=1) and isclose(y, self.state[ob]['points'][1], abs_tol=1):
+                        self.state[ob]['props']['is_zombie'] = True
+                        self.state[ob]['props']['color'] = [0, 1, 0]
+                        self.state[ob]['props']['speed'] = [1, 1]
             # ob = name-1
             # if name != ob:
             #     if min_points > [self.state[ob]['points'][0], self.state[ob]['points'][1]]:
@@ -376,6 +378,6 @@ class Game:
 
 
 game = Game()
-for i in range(0, 10):
+for i in range(0, 100):
     game.state.create_new_object()
 game.main()
