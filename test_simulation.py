@@ -146,7 +146,7 @@ class State:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
                     self.state[name]['props']['speed'] = [0.2, 0.2]
-                    State.do_onse = False
+                    # State.do_onse = False
 
         self._show_object(self.state[name]['points'],
                           self.state[name]['props']['color'])
@@ -233,7 +233,7 @@ class State:
             self.state[name]['props']['is_run_away'] = False
 
         if self.state[name]['props']['is_zombie'] == False:
-            zomb = is_zombie_near()
+            zomb = False
             zomb = False
             is_run_away = self.state[name]['props']['is_run_away']
             if is_run_away:
@@ -377,6 +377,6 @@ class Game:
 
 
 game = Game()
-for i in range(0, 10):
+for i in range(0, 100):
     game.state.create_new_object()
 game.main()
