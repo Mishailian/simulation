@@ -6,7 +6,6 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-
 class State:
     '''
     state structure
@@ -19,9 +18,10 @@ class State:
     }
     '''
 
-    count = 0
+    count = 1
     do_onse = True
     __slots__ = ('aims', 'state')
+    hero_config = {'speed': 15, 'color': [0.3,0.7,1], 'size': 11}
 
     def __init__(self) -> None:
         self.state = {}
@@ -31,19 +31,24 @@ class State:
         }
 
     # add object to state (for work with him)
-    def _add_object_to_dictionary(self, ob):
-        self.state[State.count] = ob
-        self.state[State.count]['points'] = (
-            random.randint(0, 1), (random.randint(0, 1)))
-        self.state[State.count]['props']['speed'] = (
-            float(f'0.{random.randint(3,9)}'), float(f'0.{random.randint(3,9)}'))
-        self.state[State.count]['props']['color'] = [
-            1, float(f'0.{random.randint(1,1)}'), 1]
-        # count for cell identity
-        State.count += 1
+    def _add_object_to_dictionary(self, ob, is_hero=False, hero_config={}):
+        if is_hero:
+            self.state[0] = ob
+            self.state[0]['props']['color'] = hero_config['color']
+            self.state[0]['props']['size'] = hero_config['size']
+        else:
+            self.state[State.count] = ob
+            self.state[State.count]['points'] = (
+                random.randint(0, 1), (random.randint(0, 1)))
+            self.state[State.count]['props']['speed'] = (
+                float(f'0.{random.randint(3,9)}'), float(f'0.{random.randint(3,9)}'))
+            self.state[State.count]['props']['color'] = [
+                1, float(f'0.{random.randint(1,1)}'), 1]
+            # count for cell identity
+            State.count += 1
 
-    def _show_object(self, ob, color):
-        glPointSize(8)
+    def _show_object(self, ob, color, size):
+        glPointSize(size)
         glBegin(GL_POINTS)
         glColor3f(*color)
         glVertex2f(ob[0]/100, ob[1]/100)
@@ -53,6 +58,10 @@ class State:
     def create_new_object(self):
         new_object = Cell(0, 0)
         new_object.init_cell(self)
+
+    def create_hero(self):
+        new_object = Cell(50, 50)
+        new_object.init_cell(self, True, self.hero_config)
     
     def compare_lists_by_sum(self, list1, list2):
         return sum(list1) <= sum(list2)
@@ -95,75 +104,82 @@ class State:
             #     self.state[name]['props']['aim'][1] = 0
     # main
 
+    def hero_controls(self, force_x, force_y):
+        print(self.state[0]['points'])
+        x = self.state[0]['points'][0]
+        y = self.state[0]['points'][1]
+        self.state[0]['points'] = (x+force_x, y+force_y)
+
     def update_object_position(self, name):
         # initialization
-        gravity = self.state[name]['props']['is_negative_gravity']
-        speed_x = self.state[name]['props']['speed'][0]
-        speed_y = self.state[name]['props']['speed'][1]
-        new_x = self.state[name]['points'][0]
-        new_y = self.state[name]['points'][1]
+        if not self.state[name]['is_hero']:
+            gravity = self.state[name]['props']['is_negative_gravity']
+            speed_x = self.state[name]['props']['speed'][0]
+            speed_y = self.state[name]['props']['speed'][1]
+            new_x = self.state[name]['points'][0]
+            new_y = self.state[name]['points'][1]
 
-        # update old position (for collision)
-        self.state[name]['old_points'] = (new_x, new_y)
+            # update old position (for collision)
+            self.state[name]['old_points'] = (new_x, new_y)
 
-        # update old aims
-        self.aims['old_aims'][0] = self.aims['new_aims'][0]
-        self.aims['old_aims'][1] = self.aims['new_aims'][1]
-        # drop points in objсet in order to count them to determine the aim
-        # что то с плавностью делает !!!!!!!!!!!!!!!!!
-        self.init_aim_in_object(name)
-        self.find_nearest_aim(name)
+            # update old aims
+            self.aims['old_aims'][0] = self.aims['new_aims'][0]
+            self.aims['old_aims'][1] = self.aims['new_aims'][1]
+            # drop points in objсet in order to count them to determine the aim
+            # что то с плавностью делает !!!!!!!!!!!!!!!!!
+            self.init_aim_in_object(name)
+            self.find_nearest_aim(name)
 
-        # setup new aim
-        # aim = self.aims['new_aims'][0]
-        aim = self.state[name]['props']['aim'][0:2]
+            # setup new aim
+            # aim = self.aims['new_aims'][0]
+            aim = self.state[name]['props']['aim'][0:2]
 
-        old_x = new_x
-        old_y = new_y
+            old_x = new_x
+            old_y = new_y
 
-        # border
-        if new_x < 0:
-            new_x = 99
-        if new_y < 0:
-            new_y = 99
-        if new_x > 100:
-            new_x = 1
-        if new_y > 100:
-            new_y = 1
+            # border
+            if new_x < 0:
+                new_x = 99
+            if new_y < 0:
+                new_y = 99
+            if new_x > 100:
+                new_x = 1
+            if new_y > 100:
+                new_y = 1
 
-        # basic movement logic
-        if new_x < aim[0]:
-            new_x += speed_x
-        if new_x > aim[0]:
-            new_x -= speed_x
-        if new_y < aim[1] and (False == (isclose(new_y, aim[1], rel_tol=0.001))):
-            new_y += speed_y
-        if new_y > aim[1] and (False == (isclose(new_y, aim[1], rel_tol=0.001))):
-            new_y -= speed_y
+            # basic movement logic
+            if new_x < aim[0]:
+                new_x += speed_x
+            if new_x > aim[0]:
+                new_x -= speed_x
+            if new_y < aim[1] and (False == (isclose(new_y, aim[1], rel_tol=0.001))):
+                new_y += speed_y
+            if new_y > aim[1] and (False == (isclose(new_y, aim[1], rel_tol=0.001))):
+                new_y -= speed_y
 
-        # if cell stuck
-        # if old_x == new_x:
-        #     new_x += .01
-        # if old_y == new_y:
-        #     new_y += .01
-        # collision check
-        self.collision(name)
-        # setup new points to state
-        self.state[name]['points'] = (new_x, new_y)
+            # if cell stuck
+            # if old_x == new_x:
+            #     new_x += .01
+            # if old_y == new_y:
+            #     new_y += .01
+            # collision check
+            self.collision(name)
+            # setup new points to state
+            self.state[name]['points'] = (new_x, new_y)
 
-        # cheack to achieve the aim
-        if (isclose(new_x, aim[0], rel_tol=0.1)) and (isclose(new_y, aim[1], rel_tol=0.1)) and not self.state[name]['props']['is_zombie'] and not self.state[name]['props']['is_find_aim']:
-            self.aims['new_aims'][self.state[name]['props']['aim_count']] = [
-                random.randint(10, 90), random.randint(10, 90)]
-            if 1 == 1:
-                if State.do_onse:
-                    self.state[name]['props']['color'] = [0, 1, 0]
-                    self.state[name]['props']['is_zombie'] = True
-                    self.state[name]['props']['speed'] = [1, 1]
-                    State.do_onse = False
+            # cheack to achieve the aim
+            if (isclose(new_x, aim[0], rel_tol=0.1)) and (isclose(new_y, aim[1], rel_tol=0.1)) and not self.state[name]['props']['is_zombie'] and not self.state[name]['props']['is_find_aim']:
+                self.aims['new_aims'][self.state[name]['props']['aim_count']] = [
+                    random.randint(10, 90), random.randint(10, 90)]
+                if 1 == 1:
+                    if State.do_onse:
+                        self.state[name]['props']['color'] = [0, 1, 0]
+                        self.state[name]['props']['is_zombie'] = True
+                        self.state[name]['props']['speed'] = [1, 1]
+                        State.do_onse = False
 
         self._show_object(self.state[name]['points'],
-                          self.state[name]['props']['color'])
+                            self.state[name]['props']['color'], self.state[name]['props']['size'])
 
     def collision(self, name):
         state = self.show_state()
@@ -232,11 +248,11 @@ class State:
 
             self.state[name]['props']['is_run_away'] = False
 
-        if self.state[name]['props']['is_zombie'] == False:
+        if not self.state[name]['props']['is_zombie']:
             zomb = is_zombie_near()
             # zomb = False
             is_run_away = self.state[name]['props']['is_run_away']
-            if is_run_away:
+            if is_run_away :
                 x = self.state[name]['points'][0]
                 y = self.state[name]['points'][1]
                 x_zomb = self.state[zomb]['points'][0]
@@ -310,13 +326,15 @@ class Cell(State):
     def __str__(self) -> str:
         return f'cell - {State.count}'
 
-    def init_cell(self, state_instance):
+    def init_cell(self, state_instance, is_hero=False, hero_config={}):
         state_instance._add_object_to_dictionary(
             {
                 'points': (self.x, self.y),
                 'old_points': (self.x, self.y),
+                'is_hero': is_hero,
                 'props': self.set_propirties(),
-            }
+            },
+            is_hero, hero_config
         )
 
     def set_propirties(self):
@@ -329,6 +347,7 @@ class Cell(State):
             'speed': None,
             'is_zombie': False,
             'is_run_away': False,
+            'size': 8
         }
 
     # not yet thought of useful in the future
@@ -358,26 +377,40 @@ class Game:
     def __init__(self) -> None:
         self.window = Window([600, 600])
         self.state = State()
+        self.clock = pygame.time.Clock()
 
     def main(self):
+        hero_speed = self.state.hero_config['speed']
         while True:
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_d:
-                        print("D key pressed!")
+            keys = pygame.key.get_pressed()
+            delta_time = self.clock.get_time() / 1000.0 # Время, прошедшее с последнего кадра, в секундах
+
+            if keys[pygame.K_l]:
+                print("D key pressed!")
+            if keys[pygame.K_w]:
+                self.state.hero_controls(0,delta_time * hero_speed)
+            if keys[pygame.K_s]:
+                self.state.hero_controls(0,delta_time * -hero_speed)
+            if keys[pygame.K_a]:
+                self.state.hero_controls(delta_time * -hero_speed,0)
+            if keys[pygame.K_d]:
+                self.state.hero_controls(delta_time * hero_speed,0)
 
             self.window.clear()
             for ob in self.state.show_state():
                 self.state.update_object_position(ob)
             self.window.flip()
             self.window.wait(10)
+            self.clock.tick(60)  
+
 
 
 game = Game()
-for i in range(0, 100):
+game.state.create_hero()
+for i in range(0, 20):
     game.state.create_new_object()
 game.main()
