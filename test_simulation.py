@@ -59,8 +59,8 @@ class State:
 
         if self.state[name]['props']['is_run_away']:
             if coord != None:
-                self.state[name]['props']['aim'][0] = coord[0]
-                self.state[name]['props']['aim'][1] = coord[1]
+                self.state[name]['props']['aim'][0] = abs(coord[0])
+                self.state[name]['props']['aim'][1] = abs(coord[1])
 
         elif coord == None and not self.state[name]['props']['is_zombie'] and not is_find_aim:
             self.state[name]['props']['aim'][0] = self.aims['new_aims'][self.state[name]
@@ -71,13 +71,13 @@ class State:
 
         elif is_zomb:
             if coord[0] >= 0:
-                self.state[name]['props']['aim'][0] = coord[0]
+                self.state[name]['props']['aim'][0] = abs(coord[0])
             else:
-                self.state[name]['props']['aim'][0] = 1000000
+                self.state[name]['props']['aim'][0] = abs(coord[0] - 10)
             if coord[1] >= 0:
-                self.state[name]['props']['aim'][1] = coord[1]
+                self.state[name]['props']['aim'][1] = abs(coord[1])
             else:
-                self.state[name]['props']['aim'][1] = 1000000
+                self.state[name]['props']['aim'][1] = abs(coord[1] - 10)
         self.state[name]['props']['is_find_aim'] = True
     # main
 
@@ -377,6 +377,6 @@ class Game:
 
 
 game = Game()
-for i in range(0, 100):
+for i in range(0, 10):
     game.state.create_new_object()
 game.main()
