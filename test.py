@@ -1,3 +1,3 @@
 from math import isclose
-a = {'a': 1}
-print(a['a'])
+
+print(isclose(0.001,0, rel_tol=.1))
