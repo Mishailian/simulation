@@ -36,13 +36,13 @@ number_of_units = 10
 results_file = "results.json"
 
 # Загрузка фоновых изображений
-background_image_main = pygame.image.load("C:/klasss/archive/simulation/background_image_main.png")
+background_image_main = pygame.image.load("./background_image_main.png")
 background_image_main = pygame.transform.scale(background_image_main, (screen_width, screen_height))
 
-background_image_results = pygame.image.load("C:/klasss/archive/simulation/background_image_results.png")
+background_image_results = pygame.image.load("./background_image_results.png")
 background_image_results = pygame.transform.scale(background_image_results, (screen_width, screen_height))
 
-background_image_units = pygame.image.load("C:/klasss/archive/simulation/background_image_units.png")
+background_image_units = pygame.image.load("./background_image_units.png")
 background_image_units = pygame.transform.scale(background_image_units, (screen_width, screen_height))
 
 # Загрузка результатов
