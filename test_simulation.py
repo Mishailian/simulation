@@ -244,13 +244,13 @@ class State:
                 y_zomb = self.state[zomb]['points'][1]
 
                 if abs(x - x_zomb) <= 5:
-                    x += 5
+                    x -= 10
                 else:
-                    x -= 5
+                    x += 10
                 if abs(y - y_zomb) <= 5:
-                    y -= 5
+                    y -= 10
                 else:
-                    y += 5
+                    y += 10
 
                 coord = [x, y]
                 self.init_aim_in_object(name=name, coord=coord)
