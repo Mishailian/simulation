@@ -141,12 +141,12 @@ class State:
         if (isclose(new_x, aim[0], rel_tol=0.1)) and (isclose(new_y, aim[1], rel_tol=0.1)) and not self.state[name]['props']['is_zombie'] and not self.state[name]['props']['is_find_aim']:
             self.aims['new_aims'][self.state[name]['props']['aim_count']] = [
                 random.randint(10, 90), random.randint(10, 90)]
-            if 1 == 1:
+            if 1 == 11:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
                     self.state[name]['props']['speed'] = [0.2, 0.2]
-                    # State.do_onse = False
+                    State.do_onse = False
 
         self._show_object(self.state[name]['points'],
                           self.state[name]['props']['color'])
@@ -233,7 +233,7 @@ class State:
             self.state[name]['props']['is_run_away'] = False
 
         if self.state[name]['props']['is_zombie'] == False:
-            zomb = False
+            zomb = is_zombie_near()
             zomb = False
             is_run_away = self.state[name]['props']['is_run_away']
             if is_run_away:
@@ -263,7 +263,8 @@ class State:
                 second = self.aims['new_aims'][1]
                 x = self.state[name]['points'][0]
                 y = self.state[name]['points'][1]
-                if [first[0] - x, first[1] - y] < [second[0] - x, second[1] - y]:
+
+                if [abs(first[0] -  x), abs(first[1] - y)] < [abs(second[0] - x), abs(second[1] - y)]:
                     self.state[name]['props']['aim'] = [*first]
                     self.state[name]['props']['aim_count'] = 0
                 else:
