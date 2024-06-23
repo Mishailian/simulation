@@ -82,7 +82,7 @@ class State:
 
         elif is_zomb:
 
-            self.state[name]['props']['aim'][0] = self.set_borders_aim(1, 9, coord[0])
+            self.state[name]['props']['aim'][0] = self.set_borders_aim(1, 99, coord[0])
             self.state[name]['props']['aim'][1] = self.set_borders_aim(1, 99, coord[1])
 
             # if coord[0] >= 0:
