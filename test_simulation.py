@@ -147,7 +147,7 @@ class State:
         # if old_y == new_y:
         #     new_y += .01
         # collision check
-        self.collision(name)
+        # self.collision(name)
         # setup new points to state
         self.state[name]['points'] = (new_x, new_y)
 
@@ -159,8 +159,8 @@ class State:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
-                    self.state[name]['props']['speed'] = [0.4, 0.4]
-                    State.do_onse = False
+                    self.state[name]['props']['speed'] = [0.2, 0.2]
+                    # State.do_onse = False
 
         self._show_object(self.state[name]['points'],
                           self.state[name]['props']['color'])
@@ -226,7 +226,7 @@ class State:
                     y_zomb = self.state[ob]['points'][1]
                     res = [abs(x - x_zomb), abs(y - y_zomb)]
 
-                    if self.compare_lists_by_sum(res, maximum_distance):
+                    if self.compare_lists_by_sum(res, maximum_distance) :
                         self.state[name]['props']['is_run_away'] = True
                         return ob
 
@@ -243,13 +243,13 @@ class State:
                 y_zomb = self.state[zomb]['points'][1]
 
                 if abs(x - x_zomb) <= 5:
-                    x -= 10
+                    x -= .1
                 else:
-                    x += 10
+                    x += .1
                 if abs(y - y_zomb) <= 5:
-                    y -= 10
+                    y -= .1
                 else:
-                    y += 10
+                    y += .1
 
                 coord = [x, y]
                 self.init_aim_in_object(name=name, coord=coord)
