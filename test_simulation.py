@@ -67,7 +67,7 @@ class State:
                                                                         ['props']['aim_count']][0]
             self.state[name]['props']['aim'][1] = self.aims['new_aims'][self.state[name]
                                                                         ['props']['aim_count']][1]
-            self.state[name]['props']['is_find_aim'] = True
+            # self.state[name]['props']['is_find_aim'] = True
 
         elif is_zomb:
             if coord[0] >= 0:
@@ -78,7 +78,7 @@ class State:
                 self.state[name]['props']['aim'][1] = coord[1]
             else:
                 self.state[name]['props']['aim'][1] = 1000000
-
+        self.state[name]['props']['is_find_aim'] = True
     # main
 
     def update_object_position(self, name):
@@ -128,10 +128,10 @@ class State:
             new_y -= speed_y
 
         # if cell stuck
-        if old_x == new_x:
-            new_x += .01
-        if old_y == new_y:
-            new_y += .01
+        # if old_x == new_x:
+        #     new_x += .01
+        # if old_y == new_y:
+        #     new_y += .01
         # collision check
         self.collision(name)
         # setup new points to state
@@ -145,15 +145,16 @@ class State:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
-                    # State.do_onse = False
+                    self.state[name]['props']['speed'] = [0.2, 0.2]
+                    State.do_onse = False
 
         self._show_object(self.state[name]['points'],
                           self.state[name]['props']['color'])
 
     def collision(self, name):
         state = self.show_state()
-        reaction_force = 0.1
-        accuracy = 0.01
+        reaction_force = .1
+        accuracy = 0.03
         name_gravity = self.state[name]['props']['is_negative_gravity']
 
         def case_variation_handling(is_x_close, is_y_close):
@@ -233,6 +234,7 @@ class State:
 
         if self.state[name]['props']['is_zombie'] == False:
             zomb = is_zombie_near()
+            zomb = False
             is_run_away = self.state[name]['props']['is_run_away']
             if is_run_away:
                 x = self.state[name]['points'][0]
@@ -275,10 +277,13 @@ class State:
                           [0], self.state[name]['props']['aim'][1]]
             for ob in self.state:
                 # for that if object dont pic himself
-                if name != ob and self.state[ob]['props']['is_zombie']:
-                    if min_points >= [self.state[ob]['points'][0], self.state[ob]['points'][1]]:
-                        min_points = [self.state[ob]['points']
-                                      [0], self.state[ob]['points'][1]]
+                if name != ob and not self.state[ob]['props']['is_zombie']:
+
+                    if abs(min_points[0] - self.state[ob]['points'][0]) <= 10 or abs(min_points[0] + self.state[ob]['points'][0]) <= 10:
+                        min_points[0] = self.state[ob]['points'][0]
+
+                    if abs(min_points[1] - self.state[ob]['points'][1]) <= 10 or abs(min_points[1] + self.state[ob]['points'][1]) <= 10:
+                        min_points[1] = self.state[ob]['points'][1]
 
             # ob = name-1
             # if name != ob:
