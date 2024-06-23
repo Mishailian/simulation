@@ -70,20 +70,20 @@ class State:
 
         if self.state[name]['props']['is_run_away']:
             if coord != None:
-                self.state[name]['props']['aim'][0] = abs(coord[0])
-                self.state[name]['props']['aim'][1] = abs(coord[1])
+                self.state[name]['props']['aim'][0] = self.set_borders_aim(0, 100, coord[0])
+                self.state[name]['props']['aim'][1] = self.set_borders_aim(0, 100, coord[1])
 
         elif coord == None and not self.state[name]['props']['is_zombie'] and not is_find_aim:
             self.state[name]['props']['aim'][0] = self.aims['new_aims'][self.state[name]
                                                                         ['props']['aim_count']][0]
             self.state[name]['props']['aim'][1] = self.aims['new_aims'][self.state[name]
                                                                         ['props']['aim_count']][1]
-            # self.state[name]['props']['is_find_aim'] = True
+            self.state[name]['props']['is_find_aim'] = True
 
         elif is_zomb:
 
-            self.state[name]['props']['aim'][0] = self.set_borders_aim(0, 100, coord[0])
-            self.state[name]['props']['aim'][1] = self.set_borders_aim(0, 100, coord[1])
+            self.state[name]['props']['aim'][0] = self.set_borders_aim(1, 9, coord[0])
+            self.state[name]['props']['aim'][1] = self.set_borders_aim(1, 99, coord[1])
 
             # if coord[0] >= 0:
             #     self.state[name]['props']['aim'][0] = coord[0]
@@ -93,7 +93,6 @@ class State:
             #     self.state[name]['props']['aim'][1] = coord[1] 
             # else:
             #     self.state[name]['props']['aim'][1] = 0
-        self.state[name]['props']['is_find_aim'] = True
     # main
 
     def update_object_position(self, name):
@@ -160,7 +159,7 @@ class State:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
-                    self.state[name]['props']['speed'] = [0.1, 0.1]
+                    self.state[name]['props']['speed'] = [0.4, 0.4]
                     State.do_onse = False
 
         self._show_object(self.state[name]['points'],
