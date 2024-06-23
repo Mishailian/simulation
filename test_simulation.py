@@ -71,13 +71,13 @@ class State:
 
         elif is_zomb:
             if coord[0] >= 0:
-                self.state[name]['props']['aim'][0] = abs(coord[0])
+                self.state[name]['props']['aim'][0] = coord[0]
             else:
-                self.state[name]['props']['aim'][0] = abs(coord[0] - 10)
+                self.state[name]['props']['aim'][0] = coord[0] 
             if coord[1] >= 0:
-                self.state[name]['props']['aim'][1] = abs(coord[1])
+                self.state[name]['props']['aim'][1] = coord[1]
             else:
-                self.state[name]['props']['aim'][1] = abs(coord[1] - 10)
+                self.state[name]['props']['aim'][1] = coord[1] 
         self.state[name]['props']['is_find_aim'] = True
     # main
 
@@ -141,7 +141,7 @@ class State:
         if (isclose(new_x, aim[0], rel_tol=0.1)) and (isclose(new_y, aim[1], rel_tol=0.1)) and not self.state[name]['props']['is_zombie'] and not self.state[name]['props']['is_find_aim']:
             self.aims['new_aims'][self.state[name]['props']['aim_count']] = [
                 random.randint(10, 90), random.randint(10, 90)]
-            if 1 == 11:
+            if 1 == 1:
                 if State.do_onse:
                     self.state[name]['props']['color'] = [0, 1, 0]
                     self.state[name]['props']['is_zombie'] = True
@@ -210,31 +210,16 @@ class State:
                     y = self.state[name]['points'][1]
                     x_zomb = self.state[ob]['points'][0]
                     y_zomb = self.state[ob]['points'][1]
-                    if y <= y_zomb and x >= x_zomb:
-                        if [x + x_zomb, y - y_zomb] <= maximum_distance:
-                            self.state[name]['props']['is_run_away'] = True
-                            return ob
 
-                    if y <= y_zomb and x <= x_zomb:
-                        if [x + x_zomb, y + y_zomb] < maximum_distance:
-                            self.state[name]['props']['is_run_away'] = True
-                            return ob
-
-                    if y >= y_zomb and x <= x_zomb:
-                        if [x - x_zomb, y + y_zomb] < maximum_distance:
-                            self.state[name]['props']['is_run_away'] = True
-                            return ob
-
-                    if y >= y_zomb and x >= x_zomb:
-                        if [x - x_zomb, y - y_zomb] < maximum_distance:
-                            self.state[name]['props']['is_run_away'] = True
-                            return ob
+                    if [abs(x - x_zomb), abs(y - y_zomb)] <= maximum_distance:
+                        self.state[name]['props']['is_run_away'] = True
+                        return ob
 
             self.state[name]['props']['is_run_away'] = False
 
         if self.state[name]['props']['is_zombie'] == False:
             zomb = is_zombie_near()
-            zomb = False
+            # zomb = False
             is_run_away = self.state[name]['props']['is_run_away']
             if is_run_away:
                 x = self.state[name]['points'][0]
@@ -247,7 +232,7 @@ class State:
                 else:
                     x += 5
                 if abs(y - y_zomb) <= 5:
-                    y -= 5
+                    y += 5
                 else:
                     y += 5
 
