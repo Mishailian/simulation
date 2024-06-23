@@ -56,6 +56,14 @@ class State:
     
     def compare_lists_by_sum(self, list1, list2):
         return sum(list1) <= sum(list2)
+    
+    def set_borders_aim(self, min_borders, max_border, aim):
+        if aim < min_borders:
+            return min_borders
+        if aim > max_border:
+            return max_border
+        return aim
+        
 
     def init_aim_in_object(self, name, is_zomb=False, coord=None):
         is_find_aim = self.state[name]['props']['is_find_aim']
@@ -73,14 +81,18 @@ class State:
             # self.state[name]['props']['is_find_aim'] = True
 
         elif is_zomb:
-            if coord[0] >= 0:
-                self.state[name]['props']['aim'][0] = coord[0]
-            else:
-                self.state[name]['props']['aim'][0] = coord[0] 
-            if coord[1] >= 0:
-                self.state[name]['props']['aim'][1] = coord[1]
-            else:
-                self.state[name]['props']['aim'][1] = coord[1] 
+
+            self.state[name]['props']['aim'][0] = self.set_borders_aim(0, 100, coord[0])
+            self.state[name]['props']['aim'][1] = self.set_borders_aim(0, 100, coord[1])
+
+            # if coord[0] >= 0:
+            #     self.state[name]['props']['aim'][0] = coord[0]
+            # else:
+            #     self.state[name]['props']['aim'][0] = 0
+            # if coord[1] >= 0:
+            #     self.state[name]['props']['aim'][1] = coord[1] 
+            # else:
+            #     self.state[name]['props']['aim'][1] = 0
         self.state[name]['props']['is_find_aim'] = True
     # main
 
@@ -253,7 +265,7 @@ class State:
                 x = self.state[name]['points'][0]
                 y = self.state[name]['points'][1]
 
-                if [abs(first[0] -  x), abs(first[1] - y)] < [abs(second[0] - x), abs(second[1] - y)]:
+                if self.compare_lists_by_sum([abs(first[0] -  x), abs(first[1] - y)],[abs(second[0] - x), abs(second[1] - y)]):
                     self.state[name]['props']['aim'] = [*first]
                     self.state[name]['props']['aim_count'] = 0
                 else:
@@ -268,12 +280,10 @@ class State:
             for ob in self.state:
                 # for that if object dont pic himself
                 if name != ob and not self.state[ob]['props']['is_zombie']:
-
-                    if abs(min_points[0] - self.state[ob]['points'][0]) <= 10 or abs(min_points[0] + self.state[ob]['points'][0]) <= 10:
+                    if self.compare_lists_by_sum([abs(min_points[0] - self.state[ob]['points'][0]),abs(min_points[1] - self.state[ob]['points'][1])], [10,10]):
                         min_points[0] = self.state[ob]['points'][0]
-
-                    if abs(min_points[1] - self.state[ob]['points'][1]) <= 10 or abs(min_points[1] + self.state[ob]['points'][1]) <= 10:
                         min_points[1] = self.state[ob]['points'][1]
+
 
             # ob = name-1
             # if name != ob:
@@ -367,6 +377,6 @@ class Game:
 
 
 game = Game()
-for i in range(0, 2):
+for i in range(0, 10):
     game.state.create_new_object()
 game.main()
