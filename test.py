@@ -4,6 +4,7 @@ import time
 import json
 from OpenGL.GL import *
 from OpenGL.GLUT import *
+from game import Game
 
 # Инициализация Pygame
 pygame.init()
@@ -34,6 +35,7 @@ small_font = pygame.font.SysFont("Arial", 30)
 # Глобальные переменные для юнитов и результатов
 number_of_units = 10
 results_file = "results.json"
+config_file = "config.json"
 
 # Загрузка фоновых изображений
 background_image_main = pygame.image.load("./background_image_main.png")
@@ -92,36 +94,10 @@ def decrease_units():
 
 # Функция для запуска игры
 def start_game():
-    global number_of_units
-    state = State()
-    window = Window(100, 100)
-    
-    for _ in range(number_of_units):
-        state.create_new_object()
-
-    start_time = time.time()
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-        glClear(GL_COLOR_BUFFER_BIT)
-        window.draw()
-        state.show_state()
-        for obj in state.state:
-            state.update_object_position(obj)
-
-        pygame.display.flip()
-        pygame.time.wait(10)
-    
-        if not state.has_humans():  # Проверка на окончание игры
-            running = False
-
-    end_time = time.time()
-    game_duration = end_time - start_time
-    save_result(game_duration)
+    config_data = {"number_of_units": number_of_units}
+    with open('config.json', "w") as config_file:
+        json.dump(config_data, config_file)
+    Game.main()
 
 # Сохранение результата
 def save_result(duration):
@@ -182,8 +158,6 @@ def game_menu():
                 sys.exit()
 
         screen.blit(background_image_main, (0, 0))
-        #draw_text("Главное Меню", font, black, screen, screen_width / 2, screen_height / 4)
-
         create_button("Начать игру", screen_width / 3, screen_height / 2, 300, 75, dark_blue, blue, select_units_menu)
         create_button("Результаты (Топ-10)", screen_width / 3, screen_height / 1.5, 300, 75, dark_green, green, show_results)
         create_button("Выйти", screen_width / 3, screen_height / 1.2, 300, 75, dark_red, red, pygame.quit)
