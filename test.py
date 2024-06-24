@@ -4,14 +4,13 @@ import json
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from game import Game
-from static import Static
+from static import increase_units, decrease_units
 
 class GameMenu:
     def __init__(self):
         # Инициализация Pygame
-        self.static = Static()
         pygame.init()
-
+        
         # Размеры окна
         self.screen_width = 800
         self.screen_height = 600
@@ -93,8 +92,8 @@ class GameMenu:
             self.draw_text("Выберите количество юнитов", self.font, self.white, self.screen, self.screen_width / 2, self.screen_height / 4)
             self.draw_text(f"{self.number_of_units}", self.font, self.white, self.screen, self.screen_width / 2, self.screen_height / 2)
 
-            self.create_button("-", self.screen_width / 2 - 150, self.screen_height / 2 - 25, 50, 50, self.dark_red, self.red, self.static.decrease_units())
-            self.create_button("+", self.screen_width / 2 + 100, self.screen_height / 2 - 25, 50, 50, self.dark_green, self.green, self.static.increase_units())
+            self.create_button("-", self.screen_width / 2 - 150, self.screen_height / 2 - 25, 50, 50, self.dark_red, self.red, self.static.decrease_units)
+            self.create_button("+", self.screen_width / 2 + 100, self.screen_height / 2 - 25, 50, 50, self.dark_green, self.green, self.static.increase_units)
             self.create_button("Начать", self.screen_width / 2 - 100, self.screen_height / 1.2, 200, 50, self.dark_blue, self.blue, self.start_game)
 
             pygame.display.update()
