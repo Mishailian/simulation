@@ -13,7 +13,6 @@ class Static:
         return {
             "color": [0, 1, 0],
             "speed": [1, 1],
-
         }
     
     def get_cell_data(self):
@@ -53,5 +52,5 @@ class Static:
     def get_game_data(self):
         return {
             'fps': 60,
-            'count_of_objects': 20,
+            'count_of_objects': 100,
         }

@@ -18,7 +18,6 @@ class Game:
         self.fps = self.static.get_game_data()['fps']
         self.count_of_objects = self.static.get_game_data()['count_of_objects']
 
-
     def main(self):
         while True:
             for event in pygame.event.get():

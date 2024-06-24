@@ -19,19 +19,6 @@ class Cell:
             is_hero, hero_config
         )
 
-    def set_propirties(self):
-        return {
-            'aim': [1, 11],
-            'color': None,
-            'aim_count': 0,
-            'is_find_aim': False,
-            'is_negative_gravity': True,
-            'speed': None,
-            'is_zombie': False,
-            'is_run_away': False,
-            'size': 8
-        }
-
     # not yet thought of useful in the future
     def change_propirties(self):
         pass
