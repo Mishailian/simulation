@@ -1,15 +1,17 @@
 import json
 
 class Functions_json:
-    def load_results(self):
+    @staticmethod
+    def load_results(results_file):
         try:
-            with open(self.results_file, "r") as file:
+            with open(results_file, "r") as file:
                 return json.load(file)
         except FileNotFoundError:
             return []
 
-    def save_results(self, results):
-        with open(self.results_file, "w") as file:
+    @staticmethod
+    def save_results(results, results_file):
+        with open(results_file, "w") as file:
             json.dump(results, file)
 
     def save_result(self, duration):

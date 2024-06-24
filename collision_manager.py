@@ -46,7 +46,7 @@ class Collision_manager:
         state = obj.show_state()
         name_gravity = obj.state[name]['props']['is_negative_gravity']
 
-        for ob in state:
+        for ob in state: # !!!!!!!!!!!!!!!!! 
             ob_gravity = obj.state[ob]['props']['is_negative_gravity']
             is_x_close = isclose(
                 state[name]['points'][0], state[ob]['points'][0], rel_tol=self.accuracy)

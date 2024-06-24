@@ -4,12 +4,14 @@ import json
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from game import Game
+from json_manager import Functions_json
 
 class GameMenu:
     def __init__(self):
         # Инициализация Pygame
         pygame.init()
 
+        self.json_manager = Functions_json()
         # Размеры окна
         self.screen_width = 800
         self.screen_height = 600
@@ -39,13 +41,13 @@ class GameMenu:
         self.config_file = "config.json"
 
         # Загрузка фоновых изображений
-        self.background_image_main = pygame.image.load("./background_image_main.png")
+        self.background_image_main = pygame.image.load("./глав_меню.png")
         self.background_image_main = pygame.transform.scale(self.background_image_main, (self.screen_width, self.screen_height))
 
-        self.background_image_results = pygame.image.load("./background_image_results.png")
+        self.background_image_results = pygame.image.load("./достижения.png")
         self.background_image_results = pygame.transform.scale(self.background_image_results, (self.screen_width, self.screen_height))
 
-        self.background_image_units = pygame.image.load("./background_image_units.png")
+        self.background_image_units = pygame.image.load("./выбор.png")
         self.background_image_units = pygame.transform.scale(self.background_image_units, (self.screen_width, self.screen_height))
 
     def draw_text(self, text, font, color, surface, x, y):
@@ -117,7 +119,7 @@ class GameMenu:
             self.screen.blit(self.background_image_results, (0, 0))
             self.draw_text("Топ 10 результатов", self.font, self.white, self.screen, self.screen_width / 2, self.screen_height / 4)
 
-            results = self.load_results()
+            results = self.json_manager.load_results("./results.json")
             for i, result in enumerate(results):
                 self.draw_text(f"{i + 1}. {result:.2f} секунд", self.small_font, self.black, self.screen, self.screen_width / 2, self.screen_height / 3 + i * 40)
 
