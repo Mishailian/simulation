@@ -16,7 +16,7 @@ class Game:
         self.resolution = self.static.get_window_data()['resolution']
         self.window = Window(self.resolution)
         self.fps = self.static.get_game_data()['fps']
-        self.count_of_objects = self.static.get_game_data()['count_of_objects']
+        self.count_of_objects = self.static.get_game_data(json_file="config.json")['count_of_objects']
 
     def main(self):
         while True:
@@ -48,8 +48,8 @@ class Game:
             self.clock.tick(self.fps)  
 
 
-game = Game()
-game.state.create_hero()
-for i in range(0, game.count_of_objects):
-    game.state.create_new_object()
-game.main()
+#game = Game()
+#game.state.create_hero()
+#for i in range(0, game.count_of_objects):
+#    game.state.create_new_object()
+#game.main()

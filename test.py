@@ -1,167 +1,139 @@
 import pygame
 import sys
-import time
 import json
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from game import Game
+from static import Static
 
-# Инициализация Pygame
-pygame.init()
+class GameMenu:
+    def __init__(self):
+        # Инициализация Pygame
+        self.static = Static()
+        pygame.init()
 
-# Размеры окна
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
+        # Размеры окна
+        self.screen_width = 800
+        self.screen_height = 600
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
 
-# Заголовок окна
-pygame.display.set_caption("Меню игры")
+        # Заголовок окна
+        pygame.display.set_caption("Меню игры")
 
-# Цвета
-white = (255, 255, 255)
-black = (0, 0, 0)
-grey = (100, 100, 100)
-red = (200, 0, 0)
-green = (0, 200, 0)
-blue = (0, 0, 200)
-dark_blue = (0, 0, 100)
-dark_red = (100, 0, 0)
-dark_green = (0, 100, 0)
+        # Цвета
+        self.white = (255, 255, 255)
+        self.black = (0, 0, 0)
+        self.grey = (100, 100, 100)
+        self.red = (200, 0, 0)
+        self.green = (0, 200, 0)
+        self.blue = (0, 0, 200)
+        self.dark_blue = (0, 0, 100)
+        self.dark_red = (100, 0, 0)
+        self.dark_green = (0, 100, 0)
 
-# Шрифты
-font = pygame.font.SysFont("Arial", 50)
-small_font = pygame.font.SysFont("Arial", 30)
+        # Шрифты
+        self.font = pygame.font.SysFont("Arial", 50)
+        self.small_font = pygame.font.SysFont("Arial", 30)
 
-# Глобальные переменные для юнитов и результатов
-number_of_units = 10
-results_file = "results.json"
-config_file = "config.json"
+        # Глобальные переменные для юнитов и результатов
+        self.number_of_units = 10
+        self.results_file = "results.json"
+        self.config_file = "config.json"
 
-# Загрузка фоновых изображений
-background_image_main = pygame.image.load("./background_image_main.png")
-background_image_main = pygame.transform.scale(background_image_main, (screen_width, screen_height))
+        # Загрузка фоновых изображений
+        self.background_image_main = pygame.image.load("./background_image_main.png")
+        self.background_image_main = pygame.transform.scale(self.background_image_main, (self.screen_width, self.screen_height))
 
-background_image_results = pygame.image.load("./background_image_results.png")
-background_image_results = pygame.transform.scale(background_image_results, (screen_width, screen_height))
+        self.background_image_results = pygame.image.load("./background_image_results.png")
+        self.background_image_results = pygame.transform.scale(self.background_image_results, (self.screen_width, self.screen_height))
 
-background_image_units = pygame.image.load("./background_image_units.png")
-background_image_units = pygame.transform.scale(background_image_units, (screen_width, screen_height))
+        self.background_image_units = pygame.image.load("./background_image_units.png")
+        self.background_image_units = pygame.transform.scale(self.background_image_units, (self.screen_width, self.screen_height))
 
-# Загрузка результатов
-def load_results():
-    try:
-        with open(results_file, "r") as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return []
+    def draw_text(self, text, font, color, surface, x, y):
+        textobj = font.render(text, True, color)
+        textrect = textobj.get_rect()
+        textrect.center = (x, y)
+        surface.blit(textobj, textrect)
 
-# Сохранение результатов
-def save_results(results):
-    with open(results_file, "w") as file:
-        json.dump(results, file)
+    def create_button(self, text, x, y, width, height, inactive_color, active_color, action=None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
 
-# Функция для отображения текста на экране
-def draw_text(text, font, color, surface, x, y):
-    textobj = font.render(text, True, color)
-    textrect = textobj.get_rect()
-    textrect.center = (x, y)
-    surface.blit(textobj, textrect)
+        if x + width > mouse[0] > x and y + height > mouse[1] > y:
+            pygame.draw.rect(self.screen, active_color, (x, y, width, height))
+            if click[0] == 1 and action is not None:
+                action()
+                pygame.time.wait(200)  # Задержка для одного клика
+        else:
+            pygame.draw.rect(self.screen, inactive_color, (x, y, width, height))
 
-# Функция для создания кнопки
-def create_button(text, x, y, width, height, inactive_color, active_color, action=None):
-    mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
+        self.draw_text(text, self.small_font, self.white, self.screen, x + (width / 2), y + (height / 2))
 
-    if x + width > mouse[0] > x and y + height > mouse[1] > y:
-        pygame.draw.rect(screen, active_color, (x, y, width, height))
-        if click[0] == 1 and action is not None:
-            action()
-            pygame.time.wait(200)  # Задержка для одного клика
-    else:
-        pygame.draw.rect(screen, inactive_color, (x, y, width, height))
+    def start_game(self):
+        config_data = {"number_of_units": self.number_of_units}
+        with open('config.json', "w") as config_file:
+            json.dump(config_data, config_file)
+        game = Game()
+        game.state.create_hero()
+        for i in range(0, game.count_of_objects):
+            game.state.create_new_object()
+        game.main()
 
-    draw_text(text, small_font, white, screen, x + (width / 2), y + (height / 2))
+    def select_units_menu(self):
+        selecting = True
+        while selecting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-# Функция для увеличения количества юнитов
-def increase_units():
-    global number_of_units
-    number_of_units = min(100, number_of_units + 1)
+            self.screen.blit(self.background_image_units, (0, 0))
+            self.create_button("Выйти в главное меню", self.screen_width / 2 - 150, 50, 300, 50, self.dark_red, self.red, self.game_menu)
+            self.draw_text("Выберите количество юнитов", self.font, self.white, self.screen, self.screen_width / 2, self.screen_height / 4)
+            self.draw_text(f"{self.number_of_units}", self.font, self.white, self.screen, self.screen_width / 2, self.screen_height / 2)
 
-# Функция для уменьшения количества юнитов
-def decrease_units():
-    global number_of_units
-    number_of_units = max(1, number_of_units - 1)
+            self.create_button("-", self.screen_width / 2 - 150, self.screen_height / 2 - 25, 50, 50, self.dark_red, self.red, self.static.decrease_units())
+            self.create_button("+", self.screen_width / 2 + 100, self.screen_height / 2 - 25, 50, 50, self.dark_green, self.green, self.static.increase_units())
+            self.create_button("Начать", self.screen_width / 2 - 100, self.screen_height / 1.2, 200, 50, self.dark_blue, self.blue, self.start_game)
 
-# Функция для запуска игры
-def start_game():
-    config_data = {"number_of_units": number_of_units}
-    with open('config.json', "w") as config_file:
-        json.dump(config_data, config_file)
-    Game.main()
+            pygame.display.update()
 
-# Сохранение результата
-def save_result(duration):
-    results = load_results()
-    results.append(duration)
-    results.sort(reverse=True)
-    results = results[:10]
-    save_results(results)
+    def show_results(self):
+        showing = True
+        while showing:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        showing = False
 
-# Функция для выбора количества юнитов
-def select_units_menu():
-    selecting = True
-    while selecting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+            self.screen.blit(self.background_image_results, (0, 0))
+            self.draw_text("Топ 10 результатов", self.font, self.white, self.screen, self.screen_width / 2, self.screen_height / 4)
 
-        screen.blit(background_image_units, (0, 0))
-        create_button("Выйти в главное меню", screen_width / 2 - 150, 50, 300, 50, dark_red, red, game_menu)
-        draw_text("Выберите количество юнитов", font, white, screen, screen_width / 2, screen_height / 4)
-        draw_text(f"{number_of_units}", font, white, screen, screen_width / 2, screen_height / 2)
+            results = self.load_results()
+            for i, result in enumerate(results):
+                self.draw_text(f"{i + 1}. {result:.2f} секунд", self.small_font, self.black, self.screen, self.screen_width / 2, self.screen_height / 3 + i * 40)
 
-        create_button("-", screen_width / 2 - 150, screen_height / 2 - 25, 50, 50, dark_red, red, decrease_units)
-        create_button("+", screen_width / 2 + 100, screen_height / 2 - 25, 50, 50, dark_green, green, increase_units)
-        create_button("Начать", screen_width / 2 - 100, screen_height / 1.2, 200, 50, dark_blue, blue, start_game)
+            pygame.display.update()
 
-        pygame.display.update()
+    def game_menu(self):
+        menu = True
+        while menu:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-# Функция для отображения результатов
-def show_results():
-    showing = True
-    while showing:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    showing = False
+            self.screen.blit(self.background_image_main, (0, 0))
+            self.create_button("Начать игру", self.screen_width / 3, self.screen_height / 2, 300, 75, self.dark_blue, self.blue, self.select_units_menu)
+            self.create_button("Результаты (Топ-10)", self.screen_width / 3, self.screen_height / 1.5, 300, 75, self.dark_green, self.green, self.show_results)
+            self.create_button("Выйти", self.screen_width / 3, self.screen_height / 1.2, 300, 75, self.dark_red, self.red, pygame.quit)
 
-        screen.blit(background_image_results, (0, 0))
-        draw_text("Топ 10 результатов", font, white, screen, screen_width / 2, screen_height / 4)
+            pygame.display.update()
 
-        results = load_results()
-        for i, result in enumerate(results):
-            draw_text(f"{i + 1}. {result:.2f} секунд", small_font, black, screen, screen_width / 2, screen_height / 3 + i * 40)
-
-        pygame.display.update()
-
-# Основная функция меню
-def game_menu():
-    menu = True
-    while menu:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-        screen.blit(background_image_main, (0, 0))
-        create_button("Начать игру", screen_width / 3, screen_height / 2, 300, 75, dark_blue, blue, select_units_menu)
-        create_button("Результаты (Топ-10)", screen_width / 3, screen_height / 1.5, 300, 75, dark_green, green, show_results)
-        create_button("Выйти", screen_width / 3, screen_height / 1.2, 300, 75, dark_red, red, pygame.quit)
-
-        pygame.display.update()
-
-game_menu()
+if __name__ == "__main__":
+    menu = GameMenu()
+    menu.game_menu()
