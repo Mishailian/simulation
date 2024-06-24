@@ -23,7 +23,6 @@ class State:
     '''
     count = 1
     do_onse = True
-    __slots__ = ('state', 'static', 'aim_manager', 'movement_manager', 'border_manager', 'collision_manager')
 
     def __init__(self) -> None:
         self.aim_manager = AimManager()
@@ -31,6 +30,10 @@ class State:
         self.border_manager = Border_manager()
         self.collision_manager = Collision_manager()
         self.static = Static()
+        self.hero_size = self.static.get_hero_data()['hero_config']['size']
+        self.hero_color = self.static.get_hero_data()['hero_config']['color']
+        self.hero_spawn_point = self.static.get_hero_data()['spawn_point']
+        self.cell_spawn_point = self.static.get_cell_data()['spawn_point']
         self.state = {}
         
     def show_state(self):
@@ -40,8 +43,8 @@ class State:
     def _add_object_to_dictionary(self, ob, is_hero=False, hero_config={}):
         if is_hero:
             self.state[0] = ob
-            self.state[0]['props']['color'] = self.static.get_hero_data()['hero_config']['color']
-            self.state[0]['props']['size'] = self.static.get_hero_data()['hero_config']['size']
+            self.state[0]['props']['color'] = self.hero_color
+            self.state[0]['props']['size'] = self.hero_size
         else:
             self.state[State.count] = ob
             self.state[State.count]['points'] = (
@@ -62,11 +65,11 @@ class State:
 
     # setup new Cell
     def create_new_object(self):
-        new_object = Cell(0, 0)
+        new_object = Cell(*self.cell_spawn_point)
         new_object.init_cell(self)
 
     def create_hero(self):
-        new_object = Cell(50, 50)
+        new_object = Cell(*self.hero_spawn_point)
         new_object.init_cell(self, True, self.static.get_hero_data()['hero_config'])
     
     # used in exports

@@ -20,6 +20,7 @@ class Static:
             "vision_range": [2,2],
             'run_away': 0.1,
             'run_away_range': 5,
+            'spawn_point': [0, 0], 
             "props": {
                 'aim': [1, 11],
                 'color': None,
