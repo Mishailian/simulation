@@ -2,12 +2,6 @@ import json
 import pygame
 
 class Static:
-    def increase_units(self):
-        self.number_of_units = min(100, self.number_of_units + 1)
-
-    def decrease_units(self):
-        self.number_of_units = max(1, self.number_of_units - 1)
-
     def get_hero_data(self):
         return {
             'hero_config': {'speed': 15, 'color': [0.3,0.7,1], 'size': 11},

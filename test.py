@@ -4,13 +4,12 @@ import json
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from game import Game
-from static import increase_units, decrease_units
 
 class GameMenu:
     def __init__(self):
         # Инициализация Pygame
         pygame.init()
-        
+
         # Размеры окна
         self.screen_width = 800
         self.screen_height = 600
@@ -55,6 +54,12 @@ class GameMenu:
         textrect.center = (x, y)
         surface.blit(textobj, textrect)
 
+    def increase_units(self):
+        self.number_of_units = min(100, self.number_of_units + 1)
+
+    def decrease_units(self):
+        self.number_of_units = max(1, self.number_of_units - 1)
+
     def create_button(self, text, x, y, width, height, inactive_color, active_color, action=None):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
@@ -92,8 +97,8 @@ class GameMenu:
             self.draw_text("Выберите количество юнитов", self.font, self.white, self.screen, self.screen_width / 2, self.screen_height / 4)
             self.draw_text(f"{self.number_of_units}", self.font, self.white, self.screen, self.screen_width / 2, self.screen_height / 2)
 
-            self.create_button("-", self.screen_width / 2 - 150, self.screen_height / 2 - 25, 50, 50, self.dark_red, self.red, self.static.decrease_units)
-            self.create_button("+", self.screen_width / 2 + 100, self.screen_height / 2 - 25, 50, 50, self.dark_green, self.green, self.static.increase_units)
+            self.create_button("-", self.screen_width / 2 - 150, self.screen_height / 2 - 25, 50, 50, self.dark_red, self.red, self.decrease_units)
+            self.create_button("+", self.screen_width / 2 + 100, self.screen_height / 2 - 25, 50, 50, self.dark_green, self.green, self.increase_units)
             self.create_button("Начать", self.screen_width / 2 - 100, self.screen_height / 1.2, 200, 50, self.dark_blue, self.blue, self.start_game)
 
             pygame.display.update()
