@@ -84,25 +84,24 @@ class State:
    # main loop
     def update_object_position(self, name):
         # initialization
+        coords = self.state[name]['points']
+
+        # update old position (for collision)
+        self.state[name]['old_points'] = coords
+
+        # drop points in objсet in order to count them to determine the aim
+        self.aim_manager.init_aim_in_object(self, name)
+        self.aim_manager.find_nearest_aim(self, name)
+
+        # setup new aim
+        aim = self.state[name]['props']['aim'][0:2]
+
+        # border
+        coords = self.border_manager.main(coords)
+
+        # collision check
+        self.collision_manager.collision(self,name)
         if not self.state[name]['is_hero']:
-            coords = self.state[name]['points']
-
-            # update old position (for collision)
-            self.state[name]['old_points'] = coords
-
-            # drop points in objсet in order to count them to determine the aim
-            self.aim_manager.init_aim_in_object(self, name)
-            self.aim_manager.find_nearest_aim(self, name)
-
-            # setup new aim
-            aim = self.state[name]['props']['aim'][0:2]
-
-            # border
-            coords = self.border_manager.main(coords)
-
-            # collision check
-            self.collision_manager.collision(self,name)
-
             # basic movement logic
             coords = self.movement_manager.main(self.state[name], aim=aim, points=coords)
 
