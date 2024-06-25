@@ -1,5 +1,3 @@
-# aim_manager.py
-
 import random
 from math import isclose
 from bot_manager import Bot_manager
